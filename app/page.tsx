@@ -1,95 +1,48 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import HeroCarousel from '@/components/HeroCarousel';
+import Searchbar from '@/components/Searchbar';
+import Image from 'next/image';
 
-export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+const Home = () => {
+	return (
+		<>
+			<section className='px-6 md:px-20 py-24 border-2 border-red-500'>
+				<div className='flex max-xl:flex-col gap-16'>
+					<div className='flex flex-col justify-center'>
+						<p className='small-text'>
+							Smart Shopping Starts Here:
+							<Image
+								src='/assets/icons/arrow-right.svg'
+								alt='arrow'
+								width={16}
+								height={16}
+							/>
+						</p>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
-}
+						<h1 className='head-text'>
+							Unleash the Power of{' '}
+							<span className='text-primary'>PriceWise</span>
+						</h1>
+						<p className='mt-6'>
+							Powerful, self-serve product and growth analytics to help you
+							convert, engage, and retain more.
+						</p>
+						<Searchbar />
+					</div>
+					<HeroCarousel />
+				</div>
+			</section>
+
+			<section className='trending-section'>
+				<h2 className='section-text'>Trending</h2>
+
+				<div className='flex flex-wrap gap-x-8 gap-y-16'>
+					{['Apple Iphone 15', 'Book', 'Sneakers'].map((product) => (
+						<div key={product}>{product}</div>
+					))}
+				</div>
+			</section>
+		</>
+	);
+};
+
+export default Home;
