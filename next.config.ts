@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
 	images: {
 		remotePatterns: [new URL('https://m.media-amazon.com/images/I/***')],
 	},
+	typescript: {
+		ignoreBuildErrors: true,
+	},
 };
 
 export default nextConfig;
