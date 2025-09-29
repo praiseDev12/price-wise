@@ -81,18 +81,14 @@ export async function generateEmailBody(
 }
 
 const transporter = nodemailer.createTransport({
-	service: 'hotmail',
-	host: 'smtp.office365.com', // use explicit host
-	port: 465,
-	secure: true, // STARTTLS
+	pool: true,
+	service: 'gmail',
+	port: 2525,
 	auth: {
-		user: 'praise_ezeofor@outlook.com',
-		pass: process.env.EMAIL_PASSWORD, // must be app password if 2FA enabled
+		user: 'abuchipraise@gmail.com',
+		pass: process.env.EMAIL_PASSWORD,
 	},
-	requireTLS: true,
-	tls: {
-		ciphers: 'SSLv3',
-	},
+	maxConnections: 1,
 });
 
 export const sendEmail = async (
@@ -100,7 +96,7 @@ export const sendEmail = async (
 	sendTo: string[]
 ) => {
 	const mailOptions = {
-		from: 'praise_ezeofor@outlook.com', // must match auth user
+		from: 'abuchipraise@gmail.com', // must match auth user
 		to: sendTo,
 		subject: emailContent.subject,
 		html: emailContent.body,
