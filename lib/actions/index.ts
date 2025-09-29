@@ -8,6 +8,11 @@ import { getAveragePrice, getHighestPrice, getLowestPrice } from '../utils';
 import { User } from '@/types';
 import { generateEmailBody, sendEmail } from '../nodemailer';
 
+interface PricePoint {
+	price: number;
+	date?: Date;
+}
+
 export async function scrapeAndStoreProduct(productUrl: string) {
 	if (!productUrl) return;
 
@@ -113,10 +118,6 @@ export async function addUserEmailToProduct(
 
 			await product.save();
 
-			const emailContent = await generateEmailBody(product, 'WELCOME');
-
-			await sendEmail(emailContent, [userEmail]);
-		} else {
 			const emailContent = await generateEmailBody(product, 'WELCOME');
 
 			await sendEmail(emailContent, [userEmail]);

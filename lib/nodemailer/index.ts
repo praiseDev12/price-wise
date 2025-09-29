@@ -102,16 +102,7 @@ export const sendEmail = async (
 		html: emailContent.body,
 	};
 
-	transporter.verify((err, success) => {
-		if (err) {
-			console.error('SMTP Verify Error:', err);
-		} else {
-			console.log('SMTP Server is ready to take messages');
-		}
-	});
-
 	transporter.sendMail(mailOptions, (error: any, info: any) => {
 		if (error) return console.log('Nodemailer Error: ', error);
-		console.log('Email Sent: ', info);
 	});
 };
