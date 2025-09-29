@@ -1,33 +1,35 @@
-import Product from '@/lib/models/Product.model';
-import { connectToDb } from '@/lib/mongoose';
-import { generateEmailBody, sendEmail } from '@/lib/nodemailer';
-import { scrapeAmazonProduct } from '@/lib/scrapper';
-import {
-	getAveragePrice,
-	getEmailNotifType,
-	getHighestPrice,
-	getLowestPrice,
-} from '@/lib/utils';
 import { NextResponse } from 'next/server';
 
-export const maxDuration = 300; // 5 minutes
+import {
+	getLowestPrice,
+	getHighestPrice,
+	getAveragePrice,
+	getEmailNotifType,
+} from '@/lib/utils';
+import { generateEmailBody, sendEmail } from '@/lib/nodemailer';
+import { connectToDb } from '@/lib/mongoose';
+import Product from '@/lib/models/Product.model';
+import { scrapeAmazonProduct } from '@/lib/scrapper';
+
+export const maxDuration = 300; // This function can run for a maximum of 300 seconds
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export async function GET() {
+export async function GET(request: Request) {
 	try {
 		connectToDb();
 
 		const products = await Product.find({});
 
-		if (!products) throw new Error('No products found');
+		if (!products) throw new Error('No product fetched');
 
-		// 1. SCRAPE LATEST PRODUCT DETAILS AND UPDATE DB
+		// ======================== 1 SCRAPE LATEST PRODUCT DETAILS & UPDATE DB
 		const updatedProducts = await Promise.all(
 			products.map(async (currentProduct) => {
+				// Scrape product
 				const scrapedProduct = await scrapeAmazonProduct(currentProduct.url);
 
-				if (!scrapedProduct) throw new Error('No product found');
+				if (!scrapedProduct) return;
 
 				const updatedPriceHistory = [
 					...currentProduct.priceHistory,
@@ -52,27 +54,27 @@ export async function GET() {
 					product
 				);
 
-				// 2. CHECK EACH PRODUCT'S STATUS & SEND EMAIL ACCORDINLY
-				const emailNotifyType = getEmailNotifType(
+				// ======================== 2 CHECK EACH PRODUCT'S STATUS & SEND EMAIL ACCORDINGLY
+				const emailNotifType = getEmailNotifType(
 					scrapedProduct,
 					currentProduct
 				);
 
-				if (emailNotifyType && updatedProduct.users.length > 0) {
+				if (emailNotifType && updatedProduct.users.length > 0) {
 					const productInfo = {
 						title: updatedProduct.title,
 						url: updatedProduct.url,
 					};
-
+					// Construct emailContent
 					const emailContent = await generateEmailBody(
 						productInfo,
-						emailNotifyType
+						emailNotifType
 					);
-
+					// Get array of user emails
 					const userEmails = updatedProduct.users.map(
 						(user: any) => user.email
 					);
-
+					// Send email notification
 					await sendEmail(emailContent, userEmails);
 				}
 
@@ -84,7 +86,7 @@ export async function GET() {
 			message: 'Ok',
 			data: updatedProducts,
 		});
-	} catch (error) {
-		throw new Error(`Error in GET: ${error}`);
+	} catch (error: any) {
+		throw new Error(`Failed to get all products: ${error.message}`);
 	}
 }
